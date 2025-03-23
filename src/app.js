@@ -13,6 +13,7 @@ app.post("/signup",async (req,res)=>{
      );
 
      try{
+     
         await user.save();
         res.send("sucessfully signup!..");
 
@@ -78,6 +79,39 @@ app.delete("/user",async(req,res)=>{
 
 });
 
+
+app.patch("/user/:userID",async(req,res)=>{
+     const userID=req.params?.userID;   
+     const data=req.body;
+
+
+    try{
+       const update_allowed=[
+            "firstName",
+            "lastName",
+            "password",
+            "age",
+            "gender",
+            "skills"
+         ];
+    
+      const isupdate_allowed=Object.keys(data).every((k) => 
+                update_allowed.includes(k));
+        
+    if(!isupdate_allowed){
+       throw new Error("update not allowed");
+    };
+    if(data.skills.length>10){
+        throw new Error("skills should be less than 10");
+    }
+
+        await User.findByIdAndUpdate({_id:userID},data);
+        res.send("user updated successfully!!..")
+
+    }catch(err){
+           res.status(400).send("something went wrong "+ err.message)
+}
+})
 
 
 

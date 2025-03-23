@@ -8,13 +8,18 @@ const userSchema= new mongoose.Schema({
         maxLength:20,
         validate(value){
             if(!validator.isAlpha(value)){
-             throw new Error("please enter valid first name"+ value)
+             throw new Error("please enter valid firstname"+ value)
             }
          }
         
     },
     lastName:{
-        type:String
+        type:String,
+        validate(value){
+            if(!validator.isAlpha(value)){
+             throw new Error("please enter valid lastname"+ value)
+            }
+         }
     },
     emailId:{
         type:String,
@@ -44,7 +49,12 @@ const userSchema= new mongoose.Schema({
     age:{
         type:Number,
         min:18,
-        required:true
+        required:true,
+        validate(value){
+            if(!validator.isNumeric(value)){
+             throw new Error("please enter your valid age "+ value)
+            }
+         }
     },
     gender:{
         type:String,

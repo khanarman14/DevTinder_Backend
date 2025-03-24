@@ -3,27 +3,60 @@ const app = express()
 const {connectDb} = require('./config/database')
 const User = require('./models/user')
 app.use(express.json());
+const {signUpvalidation}=require('./utils/validation')
+const bcrypt = require('bcrypt');
+
 
   
-app.post("/signup",async (req,res)=>{
-         //creating a new instance of the user model  
-       
-    const user=new User(
-        req.body
-     );
+app.post("/signup",async (req,res)=>{ 
+           
+         try{
+             
+             signUpvalidation(req);
+            const {firstName,lastName,emailId,password}= req.body;
+            const hashPassword= await bcrypt.hash(password,10)
+           
+  const user=new User({
+                 firstName,
+                 lastName,
+                 emailId,
+                 password:hashPassword
 
-     try{
-     
+         });
+               
+      
         await user.save();
         res.send("sucessfully signup!..");
 
      }catch(err){
-        res.status(400).send("errot saving the user"+ err.message)
+        res.status(400).send("error saving the user "+ err.message)
      } 
 
      
   });
        
+app.post("/login",async(req,res)=>{
+    try{
+          
+        const{emailId,password}=req.body;
+
+        const user=await User.findOne({emailId:emailId});
+      
+        if(!user){
+        throw new Error("Invalid Credentials");
+       }
+
+       const passwordchk=await bcrypt.compare(password,user.password);
+          if(passwordchk){
+            res.send("successfully login!...");
+          }      
+       else 
+          throw new Error("Invalid Credentials");
+
+    }catch(err){
+   res.status(400).send("something went wrong "+ err.message)
+}
+})
 
 app.get("/user",async (req,res)=>{
      
@@ -101,6 +134,7 @@ app.patch("/user/:userID",async(req,res)=>{
     if(!isupdate_allowed){
        throw new Error("update not allowed");
     };
+   
     if(data.skills.length>10){
         throw new Error("skills should be less than 10");
     }

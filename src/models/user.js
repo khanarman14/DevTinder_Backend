@@ -8,7 +8,7 @@ const userSchema= new mongoose.Schema({
         maxLength:20,
         validate(value){
             if(!validator.isAlpha(value)){
-             throw new Error("please enter valid firstname"+ value)
+             throw new Error("please enter valid firstname "+ value)
             }
          }
         
@@ -17,7 +17,7 @@ const userSchema= new mongoose.Schema({
         type:String,
         validate(value){
             if(!validator.isAlpha(value)){
-             throw new Error("please enter valid lastname"+ value)
+             throw new Error("please enter valid lastname "+ value)
             }
          }
     },
@@ -38,7 +38,6 @@ const userSchema= new mongoose.Schema({
         type:String,
         required:true,
         minLength:8,
-        maxLength:15,
         validate(value){
             if(!validator.isStrongPassword(value)){
              throw new Error("password is not strong "+ value)
@@ -48,24 +47,19 @@ const userSchema= new mongoose.Schema({
     },
     age:{
         type:Number,
-        min:18,
-        required:true,
-        validate(value){
-            if(!validator.isNumeric(value)){
-             throw new Error("please enter your valid age "+ value)
-            }
-         }
+        min:18
+        
     },
     gender:{
         type:String,
-        required:true,
        enum: {
       values: ['male', 'female','other'],
       message: '{VALUE} is not supported'
     }
     },
     skills:{
-        any:[]
+        any:[],
+      
     }
 
 },{timestamps: true});

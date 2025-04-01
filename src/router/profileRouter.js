@@ -3,6 +3,8 @@ const profileRouter =express.Router();
 const {userAuth}=require('../middlewares/auth');
 const User = require('../models/user');
 const{updateAllowedValidation}=require("../utils/validation");
+const validator = require('validator');
+const bcrypt = require('bcrypt');
 
 
 profileRouter.get("/profile/view",userAuth,async(req,res)=>{
@@ -44,10 +46,35 @@ try{
 
 profileRouter.patch("/profile/updatePassword",userAuth,async(req,res)=>{
     try{
-    
+         const{currentPassword,newPassword}=req.body;
+         const user=res.locals.user;
+         if(!newPassword){
+            throw new Error("password is not valid");
+         }
+ 
+          if(!validator.isStrongPassword(newPassword)){
+              throw new Error("password  is not valid")
+            }
+
+         const passwordchk=await user.validatePassword(currentPassword);
+         
+         if(!passwordchk){
+              throw new Error("current password is not valid");
+          }
+          
+          const newHashPassword=await bcrypt.hash(newPassword,10);
+         
+          user.password=newHashPassword;
+          await user.save();
+
+          res.cookie("token",null,
+               {
+                expires: new Date(Date.now())
+               }
+          )
 
 
-
+      res.send("password change successfully");
 
     }catch(err){
         res.status(400).send("something went wrong "+err.message);

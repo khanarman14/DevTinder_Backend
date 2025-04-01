@@ -13,10 +13,30 @@ const signUpvalidation=(req)=>{
 
     else if(!validator.isStrongPassword(password)){
         throw new Error("password  is not valid");
-    }
+    } 
+}
+
+const updateAllowedValidation=(req)=>{
+
+    const update_allowed=[
+        "age",
+        "gender",
+        "skills"
+     ];
+
+     const isupdate_allowed=Object.keys(req.body).every((k) => 
+        update_allowed.includes(k));
+
+     if(req.body.skills.length>10){
+        throw new Error("skills should be less than 10");
+      }
+
+    return isupdate_allowed;
+
 
 }
 
 module.exports={
-    signUpvalidation
+    signUpvalidation,
+    updateAllowedValidation
 }

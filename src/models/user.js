@@ -1,5 +1,8 @@
 const mongoose =require('mongoose');
 const validator = require('validator');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+
 
 const userSchema= new mongoose.Schema({
     firstName:{
@@ -57,11 +60,27 @@ const userSchema= new mongoose.Schema({
       message: '{VALUE} is not supported'
     }
     },
-    skills:{
-        any:[],
+    
+   skills: [{
+
+    type: String
+
+}]
       
-    }
 
 },{timestamps: true});
 
+userSchema.methods.jwtSign=async function(){
+    const user=this;
+      
+    const token= await jwt.sign({_id:user._id},"DevTinder123");
+    return token;
+};
+
+userSchema.methods.validatePassword=async function(userPasswordInput){
+     const user=this;
+
+    const isPaswordValid=await bcrypt.compare(userPasswordInput,user.password);
+    return isPaswordValid;
+}
 module.exports=mongoose.model("User",userSchema);

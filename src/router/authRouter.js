@@ -21,7 +21,6 @@ authRouter.post("/signup",async (req,res)=>{
 
                 });
           
- 
          await user.save();
             res.send("sucessfully signup!..");
 
@@ -51,7 +50,7 @@ authRouter.post("/login",async(req,res)=>{
             res.cookie("token",cookieToken, {
                 expires: new Date(Date.now() + 8 * 3600000)}
               );
-            res.send("successfully login!...");
+            res.send(user);
           }      
        else 
           throw new Error("Invalid Credentials");

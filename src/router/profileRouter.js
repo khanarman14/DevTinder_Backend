@@ -27,7 +27,7 @@ try{
        const lognedInUser=res.locals.user;
      
        Object.keys(req.body).forEach((key)=>{
-               lognedInUser[key]=req.body[key]
+         lognedInUser[key]=req.body[key]
     });
 
     await lognedInUser.save();
@@ -42,24 +42,26 @@ try{
     res.status(400).send("something went wrong "+ err.message);
 }
 
-});
+}); 
 
 profileRouter.patch("/profile/updatePassword",userAuth,async(req,res)=>{
     try{
          const{currentPassword,newPassword}=req.body;
          const user=res.locals.user;
+
+
          if(!newPassword){
             throw new Error("password is not valid");
          }
  
           if(!validator.isStrongPassword(newPassword)){
-              throw new Error("password  is not valid")
+              throw new Error("password  is not strong")
             }
 
          const passwordchk=await user.validatePassword(currentPassword);
          
          if(!passwordchk){
-              throw new Error("current password is not valid");
+              throw new Error("current password is not correct");
           }
           
           const newHashPassword=await bcrypt.hash(newPassword,10);

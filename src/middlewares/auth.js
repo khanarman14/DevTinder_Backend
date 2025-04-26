@@ -7,7 +7,7 @@ const userAuth=async(req,res,next)=>{
       const cookie=req.cookies;
       const{token}=cookie;
        if(!token){
-         throw new Error("Invalid token");
+         throw new Error("unauthorized error")
        }
        const {_id}=jwt.verify(cookie.token,'DevTinder123');
         

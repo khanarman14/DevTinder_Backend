@@ -7,7 +7,6 @@ const bcrypt = require('bcrypt');
 const userSchema= new mongoose.Schema({
     firstName:{
         type:String,
-        minLength:4,
         maxLength:20,
         validate(value){
             if(!validator.isAlpha(value)){
@@ -60,7 +59,15 @@ const userSchema= new mongoose.Schema({
       message: '{VALUE} is not supported'
     }
     },
-    
+    photoUrl:{
+              type:String,
+              default:"https://as1.ftcdn.net/jpg/07/24/59/76/1000_F_724597608_pmo5BsVumFcFyHJKlASG2Y2KpkkfiYUU.webp"
+    },
+    about:{
+                type:String,
+                default:"This is default about"
+    }
+    ,
    skills: [{
 
     type: String

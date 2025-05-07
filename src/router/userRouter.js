@@ -14,7 +14,7 @@ userRouter.get("/user/request/received",userAuth,async(req,res)=>{
           const data=await ConnectionRequest.find({
             toUserId:loggnedInUser,
             status:"interested"
-          }).populate("fromUserId",["firstName","lastName"])
+          }).populate("fromUserId",["firstName","lastName","about","photoUrl","age","gender"])
 
          res.send(data);    
 
@@ -38,7 +38,7 @@ userRouter.get("/user/connections",userAuth,async(req,res)=>{
                     { fromUserId:loggnedInUser,status:"accept"}
 
                 ]
-            }).populate("fromUserId",["firstName","lastName"]).populate("toUserId",["firstName","lastName"])
+            }).populate("fromUserId",["firstName","lastName","photoUrl","about"]).populate("toUserId",["firstName","lastName","photoUrl","about"])
                 
               
               const connectionData=data.map((row)=>
@@ -66,8 +66,10 @@ userRouter.get("/user/connections",userAuth,async(req,res)=>{
 
 userRouter.get("/feed",userAuth,async(req,res)=>{
     try{
-          const limit=req.query.page;
-          const skip=req.query.skip;
+          const limit=req.query.page || 10 ;
+          const page=req.query.page || 1 ;
+          const skip= (page-1)*10   ;
+
           const loggnedInUser=res.locals.user._id
          
           const userConnection=await ConnectionRequest.find({
@@ -89,7 +91,7 @@ userRouter.get("/feed",userAuth,async(req,res)=>{
                 _id:{$nin:Array.from(hideUserFeed)}
               }
             
-        ).skip().limit();
+        ).skip(skip).limit(limit);
 
           res.send(showUserFeed);
 

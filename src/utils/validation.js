@@ -19,8 +19,12 @@ const signUpvalidation=(req)=>{
 const updateAllowedValidation=(req)=>{
 
     const update_allowed=[
+        "firstName",
+        "lastName",
         "age",
         "gender",
+        "about",
+        "photoUrl",
         "skills"
      ];
 

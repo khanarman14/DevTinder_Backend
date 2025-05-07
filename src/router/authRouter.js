@@ -12,7 +12,6 @@ authRouter.post("/signup",async (req,res)=>{
        signUpvalidation(req);
        const {firstName,lastName,emailId,password} = req.body;
        const hashPassword= await bcrypt.hash(password,10)
-      
        const user=new User({
             firstName,
             lastName,
@@ -20,9 +19,20 @@ authRouter.post("/signup",async (req,res)=>{
             password:hashPassword
 
                 });
-          
-         await user.save();
-            res.send("sucessfully signup!..");
+
+        const savedUser= await user.save();
+
+        const cookieToken=await savedUser.jwtSign();
+        
+        res.cookie("token",cookieToken, {
+        expires: new Date(Date.now() + 8 * 3600000)}
+   );
+
+
+            res.json({
+               message:'Signup successfully!!!!',
+               data:savedUser
+            });
 
 }
 

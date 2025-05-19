@@ -31,8 +31,8 @@ const updateAllowedValidation=(req)=>{
      const isupdate_allowed=Object.keys(req.body).every((k) => 
         update_allowed.includes(k));
 
-     if(req.body.skills.length>10){
-        throw new Error("skills should be less than 10");
+     if(req.body.skills.length>50){
+        throw new Error("skills should be less than 50");
       }
 
     return isupdate_allowed;

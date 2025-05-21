@@ -1,4 +1,5 @@
 const { Server }= require("socket.io");
+const Chat =require('../models/Chat')
 
 
 const socketConnection=(httpServer)=>{
@@ -9,20 +10,37 @@ const socketConnection=(httpServer)=>{
 });
 
  io.on("connection", (socket) => {
-     socket.on('joinChat',({targetUserId,userId})=>{
+try{
+                       socket.on('joinChat',({targetUserId,userId})=>{
           const roomId=[targetUserId,userId].sort().join("&*")
           socket.join(roomId)
      })
-     socket.on('sendMessage',( {
-                firstName,
-                userId,
-                targetUserId,
-                text
-            })=>{
+     socket.on('sendMessage',async({firstName,userId,targetUserId,text})=>{
                 const roomId=[targetUserId,userId].sort().join("&*");
-                io.to(roomId).emit('messageReceived',{firstName,text})
+                     let chat=await Chat.findOne({participants:{$all:[targetUserId,userId]}});
+                     
+                     if(!chat){
+                        chat=new Chat({
+                           participants:[targetUserId,userId],
+                           messages:[],
+                        }
+                        )
+                     }
+                      chat.messages.push({
+                            senderId:userId,
+                            text
+                        });
+                        await chat.save();
+                       io.to(roomId).emit('messageReceived',{firstName,text})
             })
-     socket.on('disconnect',()=>{})
+                  socket.on('disconnect',()=>{})
+}
+                
+catch(err)      {
+                    console.log(err)
+                }
+
+              
 })
 
 }

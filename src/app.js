@@ -9,6 +9,7 @@ const connectionRouter=require('./router/connectionRouter')
 const userRouter=require('./router/userRouter')
 const { createServer }= require("http");
 const  { socketConnection }= require('./utils/socketConnection');
+const chatRouter=require('./router/chatRouter')
 
 app.use(cors({
         origin: 'http://localhost:5173',
@@ -22,7 +23,8 @@ app.use(cookieParser());
 app.use("/",authRouter);      
 app.use("/",profileRouter);      
 app.use("/",connectionRouter);      
-app.use("/",userRouter);      
+app.use("/",userRouter);
+app.use("/",chatRouter);      
 
 const httpServer = createServer(app);
 
